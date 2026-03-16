@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EduVision AI — Learn Anything in Video</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #07080f;
+    --surface: #0e1018;
+    --surface2: #141620;
+    --border: rgba(255,255,255,0.07);
+    --accent: #64ffda;
+    --accent2: #7c6aff;
+    --accent3: #ff6b6b;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --glow: rgba(100,255,218,0.15);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(100,255,218,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(100,255,218,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Floating orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    animation: drift 15s ease-in-out infinite;
+  }
+  .orb-1 { width: 500px; height: 500px; background: rgba(100,255,218,0.06); top: -100px; left: -100px; animation-delay: 0s; }
+  .orb-2 { width: 400px; height: 400px; background: rgba(124,106,255,0.07); bottom: -50px; right: -80px; animation-delay: -7s; }
+  .orb-3 { width: 300px; height: 300px; background: rgba(255,107,107,0.05); top: 40%; left: 60%; animation-delay: -3s; }
+  @keyframes drift {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(30px,-20px) scale(1.05); }
+    66% { transform: translate(-20px,30px) scale(0.97); }
+  }
+
+  .container { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Header ── */
+  header {
+    padding: 32px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .logo-text { color: var(--text); }
+  .logo-text span { color: var(--accent); }
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(100,255,218,0.08);
+    border: 1px solid rgba(100,255,218,0.2);
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    padding: 80px 0 60px;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    padding: 6px 14px;
+    border: 1px solid rgba(100,255,218,0.2);
+    border-radius: 20px;
+    background: rgba(100,255,218,0.05);
+  }
+  .hero-tag::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(38px, 7vw, 72px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+    color: #fff;
+  }
+  h1 .line2 {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto 48px;
+    line-height: 1.7;
+  }
+  .hero-sub strong { color: var(--text); font-weight: 500; }
+
+  /* ── Main Form Card ── */
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .form-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+    opacity: 0.4;
+  }
+
+  .form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .question-area {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text);
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-height: 100px;
+    line-height: 1.6;
+  }
+  .question-area::placeholder { color: #3a3f52; }
+  .question-area:focus {
+    border-color: rgba(100,255,218,0.3);
+    box-shadow: 0 0 0 3px rgba(100,255,218,0.06);
+  }
+
+  /* Audience selector */
+  .audience-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 24px 0;
+  }
+  .audience-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .audience-btn:hover { border-color: rgba(255,255,255,0.15); }
+  .audience-btn.active {
+    border-color: var(--accent);
+    background: rgba(100,255,218,0.06);
+    box-shadow: 0 0 20px rgba(100,255,218,0.08);
+  }
+  .audience-emoji { font-size: 24px; display: block; margin-bottom: 6px; }
+  .audience-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    display: block;
+  }
+  .audience-desc {
+    font-size: 11px;
+    color: var(--muted);
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* Examples */
+  .examples-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0 28px;
+  }
+  .example-chip {
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+    white-space: nowrap;
+  }
+  .example-chip:hover {
+    border-color: rgba(100,255,218,0.3);
+    color: var(--accent);
+    background: rgba(100,255,218,0.04);
+  }
+
+  /* Generate button */
+  .btn-generate {
+    width: 100%;
+    padding: 18px 32px;
+    background: linear-gradient(135deg, var(--accent), #4de8c4);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #07080f;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-generate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #4de8c4, var(--accent2));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn-generate:hover::before { opacity: 1; }
+  .btn-generate:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(100,255,218,0.3); }
+  .btn-generate:active { transform: translateY(0); }
+  .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-generate span { position: relative; z-index: 1; }
+  .btn-icon { font-size: 20px; position: relative; z-index: 1; }
+
+  /* ── Progress Panel ── */
+  #progress-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 36px 40px;
+    margin-bottom: 40px;
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .progress-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .progress-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .progress-message {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .progress-track {
+    background: var(--surface2);
+    border-radius: 4px;
+    height: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    transition: color 0.3s;
+  }
+  .step-item.active { color: var(--text); }
+  .step-item.done { color: var(--accent); }
+  .step-dot {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .step-item.active .step-dot {
+    border-color: var(--accent2);
+    background: rgba(124,106,255,0.15);
+    color: var(--accent2);
+  }
+  .step-item.done .step-dot {
+    border-color: var(--accent);
+    background: rgba(100,255,218,0.1);
+    color: var(--accent);
+  }
+
+  /* ── Video Result ── */
+  #result-panel {
+    display: none;
+    animation: fadeUp 0.4s ease;
+    margin-bottom: 60px;
+  }
+
+  .result-video-wrap {
+    background: #000;
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .result-video-wrap video {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .result-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .meta-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .meta-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .key-points {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .key-points li {
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.5;
+  }
+  .key-points li::before {
+    content: '▸';
+    color: var(--accent);
+    font-size: 10px;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+
+  .narration-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .result-actions {
+    display: flex;
+    gap: 12px;
+  }
+  .btn-secondary {
+    flex: 1;
+    padding: 14px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+  .btn-secondary:hover {
+    border-color: rgba(255,255,255,0.2);
+    background: var(--surface2);
+  }
+  .btn-new {
+    flex: 1;
+    padding: 14px 20px;
+    background: rgba(100,255,218,0.08);
+    border: 1px solid rgba(100,255,218,0.2);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-new:hover { background: rgba(100,255,218,0.12); }
+
+  /* ── How it works ── */
+  .how-section {
+    padding: 60px 0;
+    text-align: center;
+  }
+  .section-label-top {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -1px;
+    margin-bottom: 48px;
+  }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    text-align: left;
+  }
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .step-card:hover { border-color: rgba(255,255,255,0.12); }
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 42px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.05);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .step-icon { font-size: 28px; margin-bottom: 12px; display: block; }
+  .step-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .step-info { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  footer strong { color: var(--accent); }
+
+  /* ── Error state ── */
+  .error-box {
+    background: rgba(255,107,107,0.06);
+    border: 1px solid rgba(255,107,107,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 13px;
+    color: #ff6b6b;
+    margin-top: 16px;
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .audience-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .steps-grid { grid-template-columns: 1fr 1fr; }
+    .result-meta { grid-template-columns: 1fr; }
+    .form-card, #progress-panel { padding: 24px 20px; }
+    h1 { letter-spacing: -1.5px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🎬</div>
+      <div class="logo-text">Edu<span>Vision</span> AI</div>
+    </div>
+    <div class="badge">Beta v0.1</div>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">Powered by Claude AI + Manim + ElevenLabs</div>
+    <h1>
+      Ask anything.<br/>
+      <span class="line2">Get a video explanation.</span>
+    </h1>
+    <p class="hero-sub">
+      Type any question — from <strong>Python basics</strong> to <strong>quantum physics</strong> to <strong>how photosynthesis works</strong> — and get a personalized animated educational video in minutes.
+    </p>
+  </div>
+
+  <!-- Main Form -->
+  <div class="form-card">
+    <label class="form-label">Your question</label>
+    <textarea
+      class="question-area"
+      id="question"
+      placeholder="e.g. Explain how Python loops work to a beginner..."
+      maxlength="500"
+    ></textarea>
+
+    <div class="examples-row">
+      <span class="example-chip" onclick="setExample(this)">How do Python loops work?</span>
+      <span class="example-chip" onclick="setExample(this)">What is photosynthesis?</span>
+      <span class="example-chip" onclick="setExample(this)">Explain the Pythagorean theorem</span>
+      <span class="example-chip" onclick="setExample(this)">How does the internet work?</span>
+      <span class="example-chip" onclick="setExample(this)">What is machine learning?</span>
+      <span class="example-chip" onclick="setExample(this)">Explain recursion in programming</span>
+    </div>
+
+    <label class="form-label">Explain it to a...</label>
+    <div class="audience-grid" id="audience-grid">
+      <div class="audience-btn active" data-value="child" onclick="selectAudience(this)">
+        <span class="audience-emoji">🧒</span>
+        <span class="audience-name">Child</span>
+        <span class="audience-desc">Age 6–10, simple</span>
+      </div>
+      <div class="audience-btn" data-value="student" onclick="selectAudience(this)">
+        <span class="audience-emoji">🎓</span>
+        <span class="audience-name">Student</span>
+        <span class="audience-desc">High school / uni</span>
+      </div>
+      <div class="audience-btn" data-value="professional" onclick="selectAudience(this)">
+        <span class="audience-emoji">💼</span>
+        <span class="audience-name">Professional</span>
+        <span class="audience-desc">Quick & practical</span>
+      </div>
+    </div>
+
+    <button class="btn-generate" id="generate-btn" onclick="generate()">
+      <span class="btn-icon">✦</span>
+      <span>Generate Video Explanation</span>
+    </button>
+
+    <div class="error-box" id="error-box"></div>
+  </div>
+
+  <!-- Progress Panel -->
+  <div id="progress-panel">
+    <div class="progress-header">
+      <div class="spinner" id="spinner"></div>
+      <div>
+        <div class="progress-title">Creating your video...</div>
+        <div class="progress-message" id="progress-msg">Starting up</div>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="steps-list">
+      <div class="step-item" id="step-0">
+        <div class="step-dot">1</div>
+        <span>Understanding your question with Claude AI</span>
+      </div>
+      <div class="step-item" id="step-1">
+        <div class="step-dot">2</div>
+        <span>Writing lesson script and animation code</span>
+      </div>
+      <div class="step-item" id="step-2">
+        <div class="step-dot">3</div>
+        <span>Generating teacher voice narration</span>
+      </div>
+      <div class="step-item" id="step-3">
+        <div class="step-dot">4</div>
+        <span>Rendering animation with Manim</span>
+      </div>
+      <div class="step-item" id="step-4">
+        <div class="step-dot">5</div>
+        <span>Combining audio and visuals into final video</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result Panel -->
+  <div id="result-panel">
+    <div class="result-video-wrap">
+      <video id="result-video" controls autoplay>
+        <source id="video-src" src="" type="video/mp4"/>
+        Your browser does not support video.
+      </video>
+    </div>
+
+    <div class="result-meta">
+      <div class="meta-card">
+        <div class="meta-label">Key takeaways</div>
+        <ul class="key-points" id="key-points"></ul>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Narration script</div>
+        <p class="narration-text" id="narration-text"></p>
+      </div>
+    </div>
+
+    <div class="result-actions">
+      <a class="btn-secondary" id="download-btn" href="#" download="eduvision-lesson.mp4">
+        ⬇ Download Video
+      </a>
+      <button class="btn-new" onclick="resetUI()">
+        ✦ Generate Another
+      </button>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="how-section">
+    <div class="section-label-top">Under the hood</div>
+    <div class="section-title">How it works</div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <span class="step-icon">🧠</span>
+        <div class="step-name">Claude AI understands</div>
+        <div class="step-info">Claude reads your question and generates a structured lesson plan with narration script and animation instructions.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <span class="step-icon">🎙️</span>
+        <div class="step-name">Voice is generated</div>
+        <div class="step-info">ElevenLabs converts the lesson narration into a warm, clear teacher voice that guides you through the topic.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <span class="step-icon">🎨</span>
+        <div class="step-name">Animation is rendered</div>
+        <div class="step-info">Manim (the tool behind 3Blue1Brown's famous math videos) renders beautiful animated visuals from the AI's instructions.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <span class="step-icon">🎬</span>
+        <div class="step-name">Video is delivered</div>
+        <div class="step-info">Audio and animation are merged into a clean MP4 — personalized, educational, and ready to watch or share.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Built by <strong>Hyde Nithin Sumithra Owk</strong> · EduVision AI Prototype v0.1
+    <br/>
+    <span style="font-size:11px; margin-top:6px; display:block;">
+      Powered by Claude API · Manim · ElevenLabs · Flask
+    </span>
+  </footer>
+
+</div>
+
+<script>
+  let selectedAudience = 'child';
+  let pollInterval = null;
+
+  function setExample(el) {
+    document.getElementById('question').value = el.textContent;
+  }
+
+  function selectAudience(el) {
+    document.querySelectorAll('.audience-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    selectedAudience = el.dataset.value;
+  }
+
+  async function generate() {
+    const question = document.getElementById('question').value.trim();
+    if (!question) {
+      showError('Please enter a question first!');
+      return;
+    }
+
+    hideError();
+    showProgress();
+
+    try {
+      const res = await fetch('/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question, audience: selectedAudience })
+      });
+      const data = await res.json();
+
+      if (data.error) { showError(data.error); hideProgress(); return; }
+
+      pollStatus(data.job_id);
+    } catch(e) {
+      showError('Could not connect to server. Make sure the Flask backend is running on port 5000.');
+      hideProgress();
+    }
+  }
+
+  function pollStatus(jobId) {
+    let lastProgress = 0;
+
+    pollInterval = setInterval(async () => {
+      try {
+        const res = await fetch(`/status/${jobId}`);
+        const job = await res.json();
+
+        updateProgress(job.progress, job.message);
+        updateSteps(job.progress);
+
+        if (job.status === 'done') {
+          clearInterval(pollInterval);
+          setTimeout(() => showResult(job), 500);
+        } else if (job.status === 'error') {
+          clearInterval(pollInterval);
+          hideProgress();
+          showError(job.message || 'Something went wrong. Please try again.');
+        }
+      } catch(e) {
+        console.error('Poll error:', e);
+      }
+    }, 1500);
+  }
+
+  function updateProgress(pct, msg) {
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-msg').textContent = msg || '';
+  }
+
+  function updateSteps(progress) {
+    const thresholds = [10, 30, 45, 65, 85];
+    thresholds.forEach((t, i) => {
+      const el = document.getElementById('step-' + i);
+      if (progress > t + 15) el.className = 'step-item done', el.querySelector('.step-dot').textContent = '✓';
+      else if (progress >= t) el.className = 'step-item active';
+    });
+  }
+
+  function showResult(job) {
+    hideProgress();
+    const videoUrl = job.video_url;
+    document.getElementById('video-src').src = videoUrl;
+    document.getElementById('result-video').load();
+    document.getElementById('download-btn').href = videoUrl;
+
+    if (job.lesson) {
+      const kp = document.getElementById('key-points');
+      kp.innerHTML = '';
+      (job.lesson.key_points || []).forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = p;
+        kp.appendChild(li);
+      });
+      document.getElementById('narration-text').textContent = job.lesson.narration || '';
+    }
+
+    document.getElementById('result-panel').style.display = 'block';
+    document.getElementById('result-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function showProgress() {
+    document.getElementById('generate-btn').disabled = true;
+    document.getElementById('progress-panel').style.display = 'block';
+    document.getElementById('result-panel').style.display = 'none';
+    document.getElementById('progress-panel').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function hideProgress() {
+    document.getElementById('progress-panel').style.display = 'none';
+    document.getElementById('generate-btn').disabled = false;
+    document.getElementById('spinner').style.display = 'block';
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('error-box');
+    box.textContent = '⚠ ' + msg;
+    box.style.display = 'block';
+  }
+  function hideError() {
+    document.getElementById('error-box').style.display = 'none';
+  }
+
+  function resetUI() {
+    document.getElementById('result-panel').style.display = 'none';
+    document.getElementById('question').value = '';
+    document.getElementById('generate-btn').disabled = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
