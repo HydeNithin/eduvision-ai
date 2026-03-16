@@ -109,7 +109,7 @@ User Question
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/eduvision-ai.git
+git clone https://github.com/HydeNithin/eduvision-ai.git
 cd eduvision-ai
 ```
 
@@ -274,7 +274,7 @@ git push origin feature/your-feature-name
 Software Engineer | MS Information Technology (4.0 GPA) | AI Builder
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat-square&logo=linkedin)](https://linkedin.com/in/nithinoh)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat-square&logo=github)](https://github.com/YOUR_USERNAME)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat-square&logo=github)](https://github.com/HydeNithin)
 
 > Built this as a solo developer in a few weeks using free API tiers.
 > Looking for collaborators, mentors, and feedback.
